@@ -1,0 +1,55 @@
+/* ========================================= */
+/* 1. TUS ESTILOS PROPIOS (Logo y Tarjetas)  */
+/* ========================================= */
+
+/* Solo controlamos el tamaño del logo */
+.logo-img {
+    height: 100px; /* Tu altura personalizada */
+    width: auto;   /* El ancho se calcula solo */
+    object-fit: contain;
+}
+
+/* Opcional: Un pequeño efecto al pasar el ratón por las casas */
+.card:hover {
+    transform: translateY(-5px);
+    transition: transform 0.3s;
+}
+
+/* ========================================= */
+/* 2. HACK PARA EL WIDGET DE GOOGLE TRANSLATE */
+/* (Esto hace que se vea transparente y blanco) */
+/* ========================================= */
+
+/* Ocultar la barra azul superior que Google intenta poner */
+body {
+    top: 0 !important;
+}
+.goog-te-banner-frame {
+    display: none !important;
+}
+
+/* Estilo del contenedor del botón (Hacerlo transparente y sin bordes) */
+.goog-te-gadget-simple {
+    background-color: transparent !important;
+    border: none !important;
+    padding: 0 !important;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
+}
+
+/* Cambiar el color del texto a BLANCO para que se lea sobre la barra roja */
+.goog-te-gadget-simple span {
+    color: white !important;
+    font-weight: bold !important;
+    font-size: 0.9rem !important;
+}
+
+/* Ocultar el icono de la 'G' de Google para que quede más limpio */
+.goog-te-gadget-icon {
+    display: none !important;
+}
+
+/* Ajuste fino de alineación para que quede centrado con el texto */
+#google_translate_element {
+    display: inline-block;
+    vertical-align: middle;
+}

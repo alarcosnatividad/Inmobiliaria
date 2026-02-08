@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Nueva Propiedad</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0">Publicar Propiedad</h3>
+                </div>
+                <div class="card-body">
+
+                    <form th:action="@{/crud/propiedades/guardar}" th:object="${propiedadDto}" method="post" enctype="multipart/form-data">
+
+                        <div class="mb-3">
+                            <label class="form-label">Tipo de Inmueble</label>
+                            <select class="form-select" th:field="*{categoriaId}" required>
+                                <option value="">-- Selecciona una categoría --</option>
+
+                                <option th:each="cat : ${categorias}"
+                                        th:value="${cat.id}"
+                                        th:text="${cat.nombre}">
+                                    Opción
+                                </option>
+
+                                <input type="hidden" th:field="*{id}">
+
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Título</label>
+                            <input type="text" class="form-control" th:field="*{titulo}" required>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Precio (€)</label>
+                                <input type="number" class="form-control" th:field="*{precio}" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Metros (m²)</label>
+                                <input type="number" class="form-control" th:field="*{metros}">
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Habitaciones</label>
+                                <input type="number" class="form-control" th:field="*{habitaciones}">
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Descripción Detallada</label>
+
+                            <input type="hidden" id="descripcionHidden" th:field="*{descripcion}">
+
+                            <div id="editor-container" style="height: 200px; background: white;">
+                                <span th:utext="*{descripcion}"></span>
+                            </div>
+                        </div>
+
+                        <div class="mb-4 p-3 border rounded bg-white">
+                            <label class="form-label fw-bold">📸 Fotos (Selecciona varias con Ctrl)</label>
+                            <input type="file" class="form-control" th:field="*{archivosImagen}" multiple accept="image/*">
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">Guardar</button>
+                            <a href="/propiedades" class="btn btn-secondary">Cancelar</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+
+<script>
+    // 1. Inicializar Quill en el div '#editor-container'
+    var quill = new Quill('#editor-container', {
+        theme: 'snow',
+        placeholder: 'Escribe aquí los detalles de la propiedad...'
+    });
+
+    // 2. Lógica para copiar el texto al input oculto
+    var inputOculto = document.querySelector('#descripcionHidden');
+
+    // Cada vez que se escriba algo en el editor...
+    quill.on('text-change', function() {
+        // ...copiamos el HTML generado al input oculto
+        inputOculto.value = quill.root.innerHTML;
+    });
+
+    // 3. (Opcional) Si estamos editando y ya había texto, asegurarse que el input oculto lo tenga
+    inputOculto.value = quill.root.innerHTML;
+</script>
+
+</body>
+</html>

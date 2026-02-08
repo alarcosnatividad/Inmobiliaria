@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Mis Propiedades - Gestión</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .img-gestion {
+            height: 200px;
+            object-fit: cover;
+        }
+    </style>
+</head>
+<body class="bg-light">
+
+<nav class="navbar navbar-dark bg-primary mb-4">
+    <div class="container">
+        <a class="navbar-brand py-0 d-flex align-items-center" href="/">
+            <span class="fw-bold">Gestión Inmobiliaria</span>
+        </a>
+        <div class="d-flex align-items-center gap-3">
+            <span class="text-white">Panel de Gestión</span>
+            <form th:action="@{/logout}" method="post" class="m-0">
+                <button type="submit" class="btn btn-danger btn-sm">Cerrar Sesión</button>
+            </form>
+        </div>
+    </div>
+</nav>
+
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Mis Propiedades</h1>
+        <a href="/crud/propiedades/insertar" class="btn btn-success fw-bold">
+            + Nueva Propiedad
+        </a>
+    </div>
+
+    <div th:if="${listaPropiedades.empty}" class="alert alert-warning text-center">
+        Aún no has publicado ninguna propiedad. ¡Anímate!
+    </div>
+
+    <div class="row">
+        <div class="col-md-4 mb-4" th:each="propiedad : ${listaPropiedades}">
+            <div class="card h-100 shadow-sm">
+
+                <div th:id="'carousel-' + ${propiedad.id}" class="carousel slide" data-bs-ride="carousel">
+                    <div class="carousel-inner">
+
+                        <div th:each="foto, iterStat : ${propiedad.nombresImagenes}"
+                             class="carousel-item"
+                             th:classappend="${iterStat.index == 0} ? 'active'">
+
+                            <img th:src="@{'/propiedades/uploads/' + ${foto}}"
+                                 class="d-block w-100 img-gestion"
+                                 alt="Foto propiedad">
+                        </div>
+
+                        <div class="carousel-item active" th:if="${#lists.isEmpty(propiedad.nombresImagenes)}">
+                            <img src="https://via.placeholder.com/400x200?text=Sin+Foto"
+                                 class="d-block w-100 img-gestion"
+                                 alt="Sin foto">
+                        </div>
+
+                    </div>
+
+                    <button class="carousel-control-prev" type="button" th:data-bs-target="'#carousel-' + ${propiedad.id}" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    </button>
+                    <button class="carousel-control-next" type="button" th:data-bs-target="'#carousel-' + ${propiedad.id}" data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    </button>
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title fw-bold" th:text="${propiedad.titulo}">Título</h5>
+                    <h6 class="text-primary fw-bold mb-2" th:text="${propiedad.precio} + ' €'">0 €</h6>
+
+                    <div class="card-text text-muted small mb-3"
+                         th:utext="${propiedad.descripcion}"
+                         style="height: 60px; overflow: hidden;">
+                        Descripción...
+                    </div>
+                </div>
+
+                <div class="card-footer bg-white border-top-0 d-flex gap-2">
+                    <a th:href="@{'/crud/propiedades/modificar/' + ${propiedad.id}}"
+                       class="btn btn-warning flex-fill fw-bold">
+                        ✏️ Editar
+                    </a>
+
+                    <a th:href="@{'/crud/propiedades/eliminar/' + ${propiedad.id}}"
+                       class="btn btn-danger flex-fill fw-bold"
+                       onclick="return confirm('¿Seguro que quieres eliminar esta propiedad? No se puede deshacer.');">
+                        🗑️ Borrar
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

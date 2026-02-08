@@ -1,0 +1,19 @@
+
+
+<div class="container mt-5" th:each="user : ${misUsuarios}">
+
+    <h1 class="text-center" th:text="${user.nombre}">
+        Nombre aquí (esto se borra luego)
+    </h1>
+
+    <p class="lead text-center" th:text="${user.email}">
+        Email aquí
+    </p>
+
+    <div class="text-center">
+        <a class="btn btn-primary" th:href="@{/}">Volver al Inicio</a>
+    </div>
+
+    <hr>
+</div>
+
