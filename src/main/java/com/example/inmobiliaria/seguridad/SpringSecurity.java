@@ -23,17 +23,19 @@ public class SpringSecurity {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(authorize -> authorize
-                        // 1. RECURSOS (Siempre permitidos)
+                        // 1. RECURSOS ESTÁTICOS (Siempre permitidos: estilos, imágenes, subidas...)
                         .requestMatchers("/css/**", "/js/**", "/images/**", "/propiedades/uploads/**", "/favicon.ico", "/webjars/**").permitAll()
 
-                        // 2. RUTAS PÚBLICAS (CORREGIDO: /propiedad/** coincide con tu controlador)
+                        // 2. RUTAS PÚBLICAS (Login, Registro, Inicio, Ver listado de casas)
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/", "/propiedades", "/propiedad/**").permitAll()
 
-                        // 3. ZONA VIP (Solo el ADMIN puede tocar categorías) <--- AÑADE ESTO
-                        .requestMatchers("/categorias/**").hasRole("ADMIN")
+                        // 3. ZONA VIP (ADMINISTRADOR) 👮‍♂️
+                        // Esta línea protege todo lo que empiece por /categorias/
+                        // Funciona tanto si en tu BD el rol es "ADMIN" como "ROLE_ADMIN"
+                        .requestMatchers("/categorias/**").hasAnyAuthority("ADMIN", "ROLE_ADMIN")
 
-                        // 3. RUTAS PRIVADAS
+                        // 4. RESTO DE RUTAS PRIVADAS (Cualquier usuario logueado puede entrar)
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form

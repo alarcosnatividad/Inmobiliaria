@@ -104,6 +104,7 @@
                         REGISTRARSE
                     </a>
                 </li>
+
             </ul>
         </div>
     </div>
@@ -111,12 +112,22 @@
 
 <div class="container mt-5">
 
-    <div class="text-center mb-5">
+    <div class="text-center mb-5 position-relative">
         <h1 class="display-5 fw-bold text-dark">Oportunidades Destacadas</h1>
         <p class="lead text-muted">Encuentra la casa de tus sueños hoy mismo</p>
         <div class="mx-auto bg-danger" style="width: 60px; height: 3px;"></div>
+
+        <div class="position-absolute top-0 end-0 d-none d-md-block" sec:authorize="hasAnyAuthority('ADMIN', 'ROLE_ADMIN')">
+            <a class="btn btn-warning shadow-sm" href="/categorias/nueva">
+                ⚙️ CREAR CATEGORÍA
+            </a>
+        </div>
+        <div class="d-md-none mt-3" sec:authorize="hasAnyAuthority('ADMIN', 'ROLE_ADMIN')">
+            <a class="btn btn-warning shadow-sm w-100" href="/categorias/nueva">
+                ⚙️ CREAR CATEGORÍA
+            </a>
+        </div>
     </div>
-    // aquí lista las categorías
     <div class="d-flex justify-content-center gap-2 mb-5 flex-wrap">
         <a href="/" class="btn btn-outline-dark rounded-0 px-4">Todas</a>
         <a th:each="cat : ${categorias}"

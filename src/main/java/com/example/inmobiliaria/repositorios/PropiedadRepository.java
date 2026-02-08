@@ -20,4 +20,6 @@ public interface PropiedadRepository extends JpaRepository<Propiedad, Long> {
     List<Propiedad> findByCategoriaId(Long id );
 
     List<Propiedad> findByCategoria(Categoria categoria );
+
+
 }

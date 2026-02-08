@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Gestión de Categorías</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+
+<nav class="navbar navbar-dark bg-dark mb-4">
+    <div class="container">
+        <span class="navbar-brand">Panel de Administrador</span>
+        <a class="btn btn-outline-light" href="/">Volver al Inicio</a>
+    </div>
+</nav>
+
+<div class="container">
+    <div class="row justify-content-center">
+
+        <div class="col-md-5 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0" th:text="${categoria.id != null} ? 'Editar Categoría' : 'Nueva Categoría'"></h4>
+                </div>
+                <div class="card-body">
+
+                    <form th:action="@{/categorias/guardar}" method="post" th:object="${categoria}">
+
+                        <input type="hidden" th:field="*{id}">
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Nombre:</label>
+                            <input type="text" class="form-control" th:field="*{nombre}" placeholder="Ej: Ático, Loft..." required>
+                        </div>
+
+                        <div class="mb-3 mt-4">
+                            <label class="form-label fw-bold">Asignar Propiedades a esta Categoría:</label>
+                            <div class="card p-2" style="max-height: 200px; overflow-y: auto;">
+
+                                <div class="form-check" th:each="prop : ${todasLasPropiedades}">
+
+                                    <input class="form-check-input" type="checkbox"
+                                           name="idsPropiedadesSeleccionadas"
+                                           th:value="${prop.id}"
+                                           th:id="'prop_' + ${prop.id}"
+                                           th:checked="${prop.categoria != null and categoria.id != null and prop.categoria.id == categoria.id}">
+                                    <label class="form-check-label" th:for="'prop_' + ${prop.id}">
+                                        <span th:text="${prop.titulo}">Título Casa</span>
+                                        <small class="text-muted" th:text="'(' + ${prop.precio} + '€)'"></small>
+                                        <span th:if="${prop.categoria != null}" class="badge bg-secondary" style="font-size: 0.7em"
+                                              th:text="${prop.categoria.nombre}">Actual</span>
+                                    </label>
+                                </div>
+
+                            </div>
+                            <small class="text-muted">Si marcas una casa que ya tenía categoría, se cambiará a esta nueva.</small>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-success">
+                                <i class="bi bi-save"></i> Guardar
+                            </button>
+                            <a th:if="${categoria.id != null}" href="/categorias/nueva" class="btn btn-secondary">Cancelar Edición</a>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-7">
+            <div class="card shadow-sm">
+                <div class="card-header bg-white">
+                    <h4 class="mb-0 text-secondary">Categorías Existentes</h4>
+                </div>
+                <div class="card-body p-0">
+                    <table class="table table-striped table-hover mb-0">
+                        <thead class="table-light">
+                        <tr>
+                            <th>ID</th>
+                            <th>Nombre</th>
+                            <th class="text-end">Acciones</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="cat : ${listaCategorias}">
+                            <td th:text="${cat.id}">1</td>
+                            <td class="fw-bold" th:text="${cat.nombre}">Ático</td>
+                            <td class="text-end">
+                                <a th:href="@{/categorias/editar/{id}(id=${cat.id})}" class="btn btn-sm btn-primary me-1">
+                                    <i class="bi bi-pencil-fill"></i>
+                                </a>
+
+                                <a th:href="@{/categorias/borrar/{id}(id=${cat.id})}"
+                                   onclick="return confirm('¿Seguro que quieres borrar esta categoría?')"
+                                   class="btn btn-sm btn-danger">
+                                    <i class="bi bi-trash-fill"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+
+                    <div th:if="${listaCategorias.isEmpty()}" class="p-3 text-center text-muted">
+                        No hay categorías creadas todavía.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+</body>
+</html>

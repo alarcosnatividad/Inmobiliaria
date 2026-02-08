@@ -2,10 +2,10 @@ package com.example.inmobiliaria.controladores;
 
 import com.example.inmobiliaria.entidades.*;
 import com.example.inmobiliaria.repositorios.CategoriaRepository;
-import com.example.inmobiliaria.repositorios.MensajeRepository; // <--- FALTABA ESTE
+import com.example.inmobiliaria.repositorios.MensajeRepository;
 import com.example.inmobiliaria.repositorios.PropiedadRepository;
 import com.example.inmobiliaria.repositorios.RepositorioMeGusta;
-import com.example.inmobiliaria.servicios.EmailService; // <--- FALTABA ESTE
+import com.example.inmobiliaria.servicios.EmailService;
 import com.example.inmobiliaria.servicios.FileProcessingService;
 import com.example.inmobiliaria.servicios.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +17,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping; // <--- FALTABA ESTE
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
@@ -52,23 +52,33 @@ public class ControladorPrincipal {
     // le voy a meter un objeto del tipo Model, al que se le pueden poner metodos como addAtribute
     // required=false, quiere decir que es opcional que me pase el id.. si no pues se muestran todas
     // mochila(los datos que pasare al html.. que les voy a dar nombre)
-    public String index( Long categoriaId, Model mochila) {
-        List<Propiedad> propiedades=propiedadRepository.findAll();
+    public String index(Long categoriaId, Model mochila) {
+        List<Propiedad> propiedades = propiedadRepository.findAll();
 
         mochila.addAttribute("listaPropiedades", propiedades);
+        // IMPORTANTE: Cargamos las categorías para que salgan los botones
         mochila.addAttribute("categorias", categoriaRepository.findAll());
         return "index";
     }
 
+    // ESTE ES EL MÉTODO QUE HEMOS MEJORADO PARA FILTRAR
     @GetMapping("/categoria/{idCategoria}")
-    public String listarCategoria(@PathVariable("idCategoria") Long idCategoria,Model model){
-        Categoria categoria=categoriaRepository.findById(idCategoria).get();
-        List<Propiedad>propiedades=propiedadRepository.findByCategoria(categoria);
-        model.addAttribute("listaPropiedades", propiedades);
+    public String listarCategoria(@PathVariable("idCategoria") Long idCategoria, Model model) {
+        // Usamos .orElse(null) para seguridad: si no existe la categoría, no explota
+        Categoria categoria = categoriaRepository.findById(idCategoria).orElse(null);
 
+        if (categoria != null) {
+            // Si la categoría existe, buscamos solo SUS casas
+            List<Propiedad> propiedades = propiedadRepository.findByCategoria(categoria);
+            model.addAttribute("listaPropiedades", propiedades);
+        } else {
+            // Si alguien pone un ID inventado, mostramos todas para no dar error
+            model.addAttribute("listaPropiedades", propiedadRepository.findAll());
+        }
+
+        // Siempre cargamos la lista de categorías para el menú de botones
         model.addAttribute("categorias", categoriaRepository.findAll());
         return "index";
-
     }
 
     // 2. DETALLE DE UNA CASA
@@ -138,7 +148,7 @@ public class ControladorPrincipal {
 
         Usuario usuario = usuarioService.buscarPorEmail(auth.getName());
         List<MeGusta> likes = repositorioMeGusta.findByUsuario(usuario);
-         // cada me gusta(sobre) con usuario y propiedad -- solo me interesa la propiedad
+        // cada me gusta(sobre) con usuario y propiedad -- solo me interesa la propiedad
         List<Propiedad> misFavoritas = likes.stream()
                 .map(MeGusta::getPropiedad)
                 .collect(Collectors.toList());
@@ -153,7 +163,7 @@ public class ControladorPrincipal {
                                 @RequestParam String nombre,
                                 @RequestParam String telefono,
                                 @RequestParam String mensaje) {
-         // ahora coge el id para buscar toda la info de la casa
+        // ahora coge el id para buscar toda la info de la casa
         Propiedad propiedad = propiedadRepository.findById(idPropiedad).orElse(null);
 
         if (propiedad != null) {
