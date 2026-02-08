@@ -30,6 +30,9 @@ public class SpringSecurity {
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/", "/propiedades", "/propiedad/**").permitAll()
 
+                        // 3. ZONA VIP (Solo el ADMIN puede tocar categorías) <--- AÑADE ESTO
+                        .requestMatchers("/categorias/**").hasRole("ADMIN")
+
                         // 3. RUTAS PRIVADAS
                         .anyRequest().authenticated()
                 )
